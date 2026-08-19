@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Projekt {
+  ID_projekta     Decimal   @id @db.Decimal(5, 0)
+  Naziv           String?   @db.VarChar(100)
+  Datum_pocetka   DateTime? @db.Date
+  Datum_zavrsetka DateTime? @db.Date
+  Budget          Decimal?  @db.Decimal(15, 2)
+  Status          String?   @default("Nije započeto") @db.VarChar(20)
+  Tim             Tim[]
+  Zadatak         Zadatak[]
+}
+
+model Tim {
+  ID_tima             Decimal     @id @db.Decimal(5, 0)
+  ID_projekta         Decimal?    @db.Decimal(5, 0)
+  ID_zaposlenika      Decimal?    @db.Decimal(5, 0)
+  Uloga               String?     @db.VarChar(50)
+  Datum_pridruzivanja DateTime?   @db.Date
+  Projekt             Projekt?    @relation(fields: [ID_projekta], references: [ID_projekta], onDelete: Restrict, map: "Tim_ibfk_1")
+  Zaposlenik          Zaposlenik? @relation(fields: [ID_zaposlenika], references: [ID_zaposlenika], onDelete: Restrict, map: "Tim_ibfk_2")
+
+  @@index([ID_projekta], map: "ID_projekta")
+  @@index([ID_zaposlenika], map: "ID_zaposlenika")
+}
+
+model ZAVRSNI_BROD {
+  ID_BRODA            Int                   @id @default(autoincrement())
+  MODEL_BRODA         String                @db.VarChar(30)
+  BOJA                String?               @db.VarChar(30)
+  REGISTRACIJA        String                @unique(map: "REGISTRACIJA") @db.VarChar(50)
+  STATUS              ZAVRSNI_BROD_STATUS?  @default(dostupan)
+  ZAVRSNI_CIJENA      ZAVRSNI_CIJENA[]
+  ZAVRSNI_OSTECENJA   ZAVRSNI_OSTECENJA[]
+  ZAVRSNI_REZERVACIJA ZAVRSNI_REZERVACIJA[]
+}
+
+model ZAVRSNI_CIJENA {
+  ID_CIJENE           Int                   @id @default(autoincrement())
+  ID_BRODA            Int
+  CIJENA              Decimal               @db.Decimal(10, 2)
+  TRAJANJE_NAJMA      Int
+  ZAVRSNI_BROD        ZAVRSNI_BROD          @relation(fields: [ID_BRODA], references: [ID_BRODA], onDelete: Cascade, onUpdate: Restrict, map: "ZAVRSNI_CIJENA_ibfk_1")
+  ZAVRSNI_REZERVACIJA ZAVRSNI_REZERVACIJA[]
+
+  @@index([ID_BRODA], map: "ID_BRODA")
+}
+
+model ZAVRSNI_KLIJENT {
+  ID_KLIJENTA         Int                   @id @default(autoincrement())
+  IME                 String                @db.VarChar(50)
+  PREZIME             String                @db.VarChar(50)
+  TELEFON             String?               @db.VarChar(20)
+  NAPOMENA            String?               @db.Text
+  ZAVRSNI_REZERVACIJA ZAVRSNI_REZERVACIJA[]
+}
+
+model ZAVRSNI_KORISNIK {
+  ID_KORISNIK         Int                   @id @default(autoincrement())
+  IME                 String                @db.VarChar(50)
+  PREZIME             String                @db.VarChar(50)
+  USERNAME            String                @unique(map: "USERNAME") @db.VarChar(30)
+  LOZINKA             String                @db.VarChar(255)
+  ZAVRSNI_REZERVACIJA ZAVRSNI_REZERVACIJA[]
+}
+
+model ZAVRSNI_OSTECENJA {
+  ID_OSTECENJA Int          @id @default(autoincrement())
+  ID_BRODA     Int
+  URL_SLIKE    String?      @db.VarChar(255)
+  OPIS         String?      @db.Text
+  DATUM        DateTime?    @db.Date
+  ZAVRSNI_BROD ZAVRSNI_BROD @relation(fields: [ID_BRODA], references: [ID_BRODA], onDelete: Cascade, onUpdate: Restrict, map: "ZAVRSNI_OSTECENJA_ibfk_1")
+
+  @@index([ID_BRODA], map: "ID_BRODA")
+}
+
+model ZAVRSNI_REZERVACIJA {
+  ID_REZERVACIJE   Int              @id @default(autoincrement())
+  ID_CIJENE        Int
+  ID_KORISNIK      Int
+  ID_BRODA         Int
+  ID_KLIJENTA      Int
+  DATUM            DateTime         @db.Date
+  VRIJEME          DateTime         @db.Time(0)
+  DEPOZIT          Decimal?         @default(0.00) @db.Decimal(10, 2)
+  UKUPNA_CIJENA    Decimal?         @db.Decimal(10, 2)
+  VRIJEME_KRAJA    DateTime?        @db.Time(0)
+  KOMENTAR         String?          @db.Text
+  ZAVRSNI_CIJENA   ZAVRSNI_CIJENA   @relation(fields: [ID_CIJENE], references: [ID_CIJENE], onUpdate: Restrict, map: "ZAVRSNI_REZERVACIJA_ibfk_1")
+  ZAVRSNI_KORISNIK ZAVRSNI_KORISNIK @relation(fields: [ID_KORISNIK], references: [ID_KORISNIK], onUpdate: Restrict, map: "ZAVRSNI_REZERVACIJA_ibfk_2")
+  ZAVRSNI_BROD     ZAVRSNI_BROD     @relation(fields: [ID_BRODA], references: [ID_BRODA], onUpdate: Restrict, map: "ZAVRSNI_REZERVACIJA_ibfk_3")
+  ZAVRSNI_KLIJENT  ZAVRSNI_KLIJENT  @relation(fields: [ID_KLIJENTA], references: [ID_KLIJENTA], onUpdate: Restrict, map: "ZAVRSNI_REZERVACIJA_ibfk_4")
+
+  @@index([ID_BRODA], map: "ID_BRODA")
+  @@index([ID_CIJENE], map: "ID_CIJENE")
+  @@index([ID_KLIJENTA], map: "ID_KLIJENTA")
+  @@index([ID_KORISNIK], map: "ID_KORISNIK")
+}
+
+model Zadatak {
+  ID_zadatka  Decimal   @id @db.Decimal(5, 0)
+  ID_projekta Decimal?  @db.Decimal(5, 0)
+  Opis        String?   @db.VarChar(200)
+  Status      String?   @db.VarChar(20)
+  Rok         DateTime? @db.Date
+  Projekt     Projekt?  @relation(fields: [ID_projekta], references: [ID_projekta], onDelete: Restrict, map: "Zadatak_ibfk_1")
+
+  @@index([ID_projekta], map: "ID_projekta")
+}
+
+model Zaposlenik {
+  ID_zaposlenika Decimal  @id @db.Decimal(5, 0)
+  Ime            String?  @db.VarChar(50)
+  Prezime        String?  @db.VarChar(50)
+  Pozicija       String?  @db.VarChar(100)
+  Placa          Decimal? @db.Decimal(10, 2)
+  Tim            Tim[]
+}
+
+model korisnici {
+  id    Int     @id @default(autoincrement())
+  ime   String? @db.VarChar(32)
+  email String? @db.VarChar(100)
+}
+
+enum ZAVRSNI_BROD_STATUS {
+  dostupan
+  rezerviran
+  pokvaren
+}
