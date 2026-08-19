@@ -12,11 +12,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
           <CardTitle>Login</CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
+          <form noValidate>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" placeholder="m@example.com" required />
+                <FieldLabel htmlFor="">Username</FieldLabel>
+                <Input id="username" placeholder="ivan123" required />
               </Field>
               <Field>
                 <div className="flex items-center">
