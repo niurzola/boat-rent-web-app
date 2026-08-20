@@ -83,7 +83,7 @@ export async function signinUserAction(prevState: any, formData: FormData) {
 
   await createSession(user.ID_KORISNIK, user.USERNAME);
 
-  redirect('/dashboard');
+  redirect('/');
 }
 
 const mainSchema = z.object({

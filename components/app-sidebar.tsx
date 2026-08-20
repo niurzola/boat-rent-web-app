@@ -36,6 +36,16 @@ export function AppSidebar() {
               <a href="/prihodi">Prihodi</a>
             </SidebarMenuButton>
           </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton>
+              <a href="/signin">Sign in</a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton>
+              <a href="/signup">Sign up</a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
         <SidebarGroup />
       </SidebarContent>
