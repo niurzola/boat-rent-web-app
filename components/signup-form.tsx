@@ -35,7 +35,6 @@ const styles = {
 
 export function SignupForm() {
   const [formState, formAction] = useActionState(registerUserAction, INITIAL_STATE);
-  console.log(formState, 'client');
   return (
     <div className={styles.container}>
       <form action={formAction}>

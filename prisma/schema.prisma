@@ -37,20 +37,23 @@ model ZAVRSNI_BROD {
   BOJA                String?               @db.VarChar(30)
   REGISTRACIJA        String                @unique(map: "REGISTRACIJA") @db.VarChar(50)
   STATUS              ZAVRSNI_BROD_STATUS?  @default(dostupan)
-  ZAVRSNI_CIJENA      ZAVRSNI_CIJENA[]
+  ID_KATEGORIJE       Int?
+  ZAVRSNI_KATEGORIJA  ZAVRSNI_KATEGORIJA?   @relation(fields: [ID_KATEGORIJE], references: [ID_KATEGORIJE], onDelete: Restrict, onUpdate: Restrict, map: "fk_zavrsni_brod_kategorija")
   ZAVRSNI_OSTECENJA   ZAVRSNI_OSTECENJA[]
   ZAVRSNI_REZERVACIJA ZAVRSNI_REZERVACIJA[]
+
+  @@index([ID_KATEGORIJE], map: "fk_zavrsni_brod_kategorija")
 }
 
 model ZAVRSNI_CIJENA {
   ID_CIJENE           Int                   @id @default(autoincrement())
-  ID_BRODA            Int
   CIJENA              Decimal               @db.Decimal(10, 2)
   TRAJANJE_NAJMA      Int
-  ZAVRSNI_BROD        ZAVRSNI_BROD          @relation(fields: [ID_BRODA], references: [ID_BRODA], onDelete: Cascade, onUpdate: Restrict, map: "ZAVRSNI_CIJENA_ibfk_1")
+  ID_KATEGORIJE       Int
+  ZAVRSNI_KATEGORIJA  ZAVRSNI_KATEGORIJA    @relation(fields: [ID_KATEGORIJE], references: [ID_KATEGORIJE], onUpdate: Restrict, map: "fk_zavrsni_cijena_kategorija")
   ZAVRSNI_REZERVACIJA ZAVRSNI_REZERVACIJA[]
 
-  @@index([ID_BRODA], map: "ID_BRODA")
+  @@index([ID_KATEGORIJE], map: "fk_zavrsni_cijena_kategorija")
 }
 
 model ZAVRSNI_KLIJENT {
@@ -129,6 +132,13 @@ model korisnici {
   id    Int     @id @default(autoincrement())
   ime   String? @db.VarChar(32)
   email String? @db.VarChar(100)
+}
+
+model ZAVRSNI_KATEGORIJA {
+  ID_KATEGORIJE  Int              @id @default(autoincrement())
+  NAZIV          String           @unique(map: "NAZIV") @db.VarChar(32)
+  ZAVRSNI_BROD   ZAVRSNI_BROD[]
+  ZAVRSNI_CIJENA ZAVRSNI_CIJENA[]
 }
 
 enum ZAVRSNI_BROD_STATUS {

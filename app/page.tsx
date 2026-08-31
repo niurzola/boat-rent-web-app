@@ -7,7 +7,7 @@ export default function Page() {
           <p className="text-center ">8</p>
         </div>
         <div className="border rounded-lg p-4 shadow-sm">
-          <h1 className="text-center text-lg font-medium">Broj rezervacija</h1>
+          <h1 className="text-center text-lg font-medium">Broj rezervacija danas</h1>
           <p className="text-center">3</p>
         </div>
         <div className="border rounded-lg p-4 shadow-sm">
