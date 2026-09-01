@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { Button } from '@/components/ui/button';
+import { BoatItem } from '@/components/boat-item';
 
 export default async function Brodovi() {
   ///dohvaca sve brodove + cijenu
@@ -19,26 +20,11 @@ export default async function Brodovi() {
           <Button>Dodaj novi brod</Button>
         </Link>
       </div>
+
       {/*ucitava brod po brod u listu */}
       <ul className="space-y-2">
         {brodovi.map((brod) => (
-          <li key={brod.ID_BRODA} className="rounded-lg border p-3">
-            <div className="font-medium">
-              {brod.MODEL_BRODA}
-              <span className="ml-2 text-muted-foreground">({brod.REGISTRACIJA})</span>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {brod.BOJA && `${brod.BOJA} · `}
-              {brod.STATUS} · {brod.ZAVRSNI_KATEGORIJA?.NAZIV ?? 'Bez kategorije'}
-            </div>
-            {brod.ZAVRSNI_KATEGORIJA && brod.ZAVRSNI_KATEGORIJA.ZAVRSNI_CIJENA.length > 0 && (
-              <div className="mt-1 text-sm text-muted-foreground">
-                {brod.ZAVRSNI_KATEGORIJA.ZAVRSNI_CIJENA.map(
-                  (c) => `${c.TRAJANJE_NAJMA}h - ${Number(c.CIJENA)} kn`
-                ).join(' · ')}
-              </div>
-            )}
-          </li>
+          <BoatItem key={brod.ID_BRODA} brod={brod} />
         ))}
       </ul>
     </div>

@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
-
+import { logoutUserAction } from '@/lib/actions/auth-actions';
 export function AppSidebar() {
   return (
     <Sidebar variant="floating">
@@ -38,6 +38,11 @@ export function AppSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton>
+              <a href="/cijene">Cijene</a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton>
               <a href="/signin">Sign in</a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -49,7 +54,15 @@ export function AppSidebar() {
         </SidebarMenu>
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <form action={logoutUserAction}>
+              <SidebarMenuButton render={<button type="submit" />}>Odjava</SidebarMenuButton>
+            </form>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>{' '}
     </Sidebar>
   );
 }

@@ -12,6 +12,9 @@ const boatSchema = z.object({
   status: z.enum(ZAVRSNI_BROD_STATUS),
   kategorija: z.string().min(1, 'Odaberi kategoriju'),
 });
+const updateBoatSchema = boatSchema.extend({
+  id: z.string().min(1, 'Nedostaje id broda'),
+});
 ///funkcija za dodati brod, parsed je shema koja je prosla validaciju
 export async function addBoat(prevState: any, formData: FormData) {
   const parsed = boatSchema.safeParse({
@@ -26,7 +29,7 @@ export async function addBoat(prevState: any, formData: FormData) {
   if (!parsed.success) {
     return {
       ...prevState,
-      zodErrors: parsed.error.flatten().fieldErrors,
+      zodErrors: z.flattenError(parsed.error).fieldErrors,
       message: 'Provjeri unos',
     };
   }
@@ -49,5 +52,61 @@ export async function addBoat(prevState: any, formData: FormData) {
       ID_KATEGORIJE: idKategorije,
     },
   });
+  redirect('/brodovi');
+}
+/// funkcija za uređivanje postojećeg broda
+export async function updateBoat(prevState: any, formData: FormData) {
+  const parsed = updateBoatSchema.safeParse({
+    id: formData.get('id'),
+    model: formData.get('model'),
+    boja: formData.get('boja'),
+    registracija: formData.get('registracija'),
+    status: formData.get('status'),
+    kategorija: formData.get('kategorija'),
+  });
+
+  if (!parsed.success) {
+    return {
+      ...prevState,
+      zodErrors: z.flattenError(parsed.error).fieldErrors,
+      message: 'Provjeri unos',
+    };
+  }
+
+  const { id, model, registracija, status, boja, kategorija } = parsed.data;
+  const idBroda = Number(id);
+  const idKategorije = Number(kategorija);
+
+  /// provjera postoji li registracija kod nekog DRUGOG broda
+  const existing = await prisma.zAVRSNI_BROD.findUnique({ where: { REGISTRACIJA: registracija } });
+  if (existing && existing.ID_BRODA !== idBroda) {
+    return { ...prevState, zodErrors: { registracija: ['Registracija već postoji'] } };
+  }
+
+  await prisma.zAVRSNI_BROD.update({
+    where: { ID_BRODA: idBroda },
+    data: {
+      MODEL_BRODA: model,
+      BOJA: boja,
+      REGISTRACIJA: registracija,
+      STATUS: status,
+      ID_KATEGORIJE: idKategorije,
+    },
+  });
+
+  redirect('/brodovi');
+}
+
+/// funkcija za brisanje broda (samo akcija, bez prevState)
+export async function deleteBoat(prevState: any, formData: FormData) {
+  const id = Number(formData.get('id'));
+
+  try {
+    await prisma.zAVRSNI_BROD.delete({ where: { ID_BRODA: id } });
+  } catch {
+    /// brod ima rezervacije (FK restrict) -> samozato poruka, redirect je van try bloka
+    return { message: 'Brod ima rezervacije i ne može se obrisati.' };
+  }
+
   redirect('/brodovi');
 }

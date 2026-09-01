@@ -2,7 +2,7 @@ import { jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 ///prevodi secret key iz .env u plain da jose moze procitat
 const encodedKey = new TextEncoder().encode(process.env.SESSION_SECRET);
-const protectedRoutes = ['/', '/brodovi', '/rezervacije', '/prihodi'];
+const protectedRoutes = ['/', '/brodovi', '/rezervacije', '/prihodi', '/cijene'];
 const authRoutes = ['/signin', '/signup'];
 
 export async function proxy(request: NextRequest) {
@@ -43,5 +43,5 @@ export async function proxy(request: NextRequest) {
 
 ///matcher - proxy ce se runnat samo na rutama koji su ovdje
 export const config = {
-  matcher: ['/', '/brodovi', '/rezervacije', '/prihodi', '/signin', '/signup'],
+  matcher: ['/', '/brodovi', '/rezervacije', '/prihodi', '/signin', '/signup', '/cijene'],
 };

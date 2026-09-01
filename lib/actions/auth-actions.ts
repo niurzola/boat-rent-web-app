@@ -4,19 +4,22 @@ import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { createSession } from '@/lib/session';
+import { deleteSession } from '@/lib/session';
 
+/// funkcija za registraciju
 export async function registerUserAction(prevState: any, formData: FormData) {
+  /// validacija sa mainscheme
   const validatedFields = mainSchema.safeParse({
     ime: formData.get('ime'),
     prezime: formData.get('prezime'),
     username: formData.get('username'),
     lozinka: formData.get('lozinka'),
   });
-
+  /// vraca errore ako validacije nije uspjela
   if (!validatedFields.success) {
     return {
       ...prevState,
-      zodErrors: validatedFields.error.flatten().fieldErrors,
+      zodErrors: z.flattenError(validatedFields.error).fieldErrors,
       message: 'Missing fields fail',
     };
   }
@@ -24,6 +27,7 @@ export async function registerUserAction(prevState: any, formData: FormData) {
   const existingUser = await prisma.zAVRSNI_KORISNIK.findUnique({
     where: { USERNAME: username },
   });
+  /// provjera ako postoji vec username
   if (existingUser) {
     return {
       ...prevState,
@@ -31,7 +35,9 @@ export async function registerUserAction(prevState: any, formData: FormData) {
       message: 'Username je već zauzet',
     };
   }
+  ///hashianje passwora 10 rundi
   const hashedPassword = await bcrypt.hash(lozinka, 10);
+  /// create novog korisnika
   await prisma.zAVRSNI_KORISNIK.create({
     data: {
       IME: ime,
@@ -42,8 +48,9 @@ export async function registerUserAction(prevState: any, formData: FormData) {
   });
   redirect('/signin');
 }
-
+/// funjkcija za sign in
 export async function signinUserAction(prevState: any, formData: FormData) {
+  ///validacija sa signinschema
   const validatedFields = signinSchema.safeParse({
     username: formData.get('username'),
     lozinka: formData.get('lozinka'),
@@ -52,13 +59,12 @@ export async function signinUserAction(prevState: any, formData: FormData) {
   if (!validatedFields.success) {
     return {
       ...prevState,
-      zodErrors: validatedFields.error.flatten().fieldErrors,
+      zodErrors: z.flattenError(validatedFields.error).fieldErrors,
       message: 'Missing fields fail',
     };
   }
-
+  ///pretraga korisnika u bazi
   const { username, lozinka } = validatedFields.data;
-
   const user = await prisma.zAVRSNI_KORISNIK.findUnique({
     where: { USERNAME: username },
   });
@@ -70,7 +76,7 @@ export async function signinUserAction(prevState: any, formData: FormData) {
       message: 'Pogrešan username ili lozinka',
     };
   }
-
+  /// provjera lozinke sa hash
   const passwordMatches = await bcrypt.compare(lozinka, user.LOZINKA);
 
   if (!passwordMatches) {
@@ -80,12 +86,15 @@ export async function signinUserAction(prevState: any, formData: FormData) {
       message: 'Pogrešan username ili lozinka',
     };
   }
-
+  /// kreiranje cookie za logged in usera
   await createSession(user.ID_KORISNIK, user.USERNAME);
 
   redirect('/');
 }
-
+export async function logoutUserAction() {
+  await deleteSession();
+  redirect('/signin');
+}
 const mainSchema = z.object({
   ime: z.string().min(2, 'Ime mora imati barem 2 znaka').max(32, 'Ime je predugačko'),
   prezime: z.string().min(2, 'Prezime mora imati barem 2 znaka').max(32, 'Prezime je predugačko'),
