@@ -23,51 +23,39 @@ const INITIAL_STATE = {
   message: null,
 };
 
-const styles = {
-  container: 'w-full max-w-md',
-  header: 'space-y-1',
-  title: 'text-3xl font-bold text-pink-500',
-  content: 'space-y-4',
-  fieldGroup: 'space-y-2',
-  footer: 'flex flex-col',
-  button: 'w-full',
-  prompt: 'mt-4 text-center text-sm',
-  link: 'ml-2 text-pink-500',
-};
-
 export function SigninForm() {
   const [formState, formAction] = useActionState(signinUserAction, INITIAL_STATE);
 
   return (
-    <div className={styles.container}>
+    <div className="w-full max-w-md">
       <form action={formAction}>
         <Card>
-          <CardHeader className={styles.header}>
-            <CardTitle className={styles.title}>Sign In</CardTitle>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-3xl font-bold text-foreground">Sign In</CardTitle>
             <CardDescription>Enter your details to sign in to your account</CardDescription>
           </CardHeader>
-          <CardContent className={styles.content}>
-            <div className={styles.fieldGroup}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <Input id="username" name="username" type="text" placeholder="username" />
               <ZodErrors error={formState?.zodErrors?.username} />
             </div>
-            <div className={styles.fieldGroup}>
+            <div className="space-y-2">
               <Label htmlFor="lozinka">Password</Label>
               <Input id="lozinka" name="lozinka" type="password" placeholder="password" />
               <ZodErrors error={formState?.zodErrors?.lozinka} />
             </div>
-            {formState?.message && <p className="text-sm text-red-500">{formState.message}</p>}
+            {formState?.message && <p className="text-sm text-destructive">{formState.message}</p>}
           </CardContent>
-          <CardFooter className={styles.footer}>
-            <Button type="submit" className={styles.button}>
+          <CardFooter className="flex flex-col">
+            <Button type="submit" className="w-full">
               Sign In
             </Button>
           </CardFooter>
         </Card>
-        <div className={styles.prompt}>
+        <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?
-          <Link className={styles.link} href="signup">
+          <Link className="ml-2 text-primary" href="signup">
             Sign Up
           </Link>
         </div>

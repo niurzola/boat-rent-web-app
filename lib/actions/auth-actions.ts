@@ -3,8 +3,23 @@ import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { createSession } from '@/lib/session';
-import { deleteSession } from '@/lib/session';
+import { deleteSession, createSession } from '@/lib/session';
+
+const mainSchema = z.object({
+  ime: z.string().min(2, 'Ime mora imati barem 2 znaka').max(32, 'Ime je predugačko'),
+  prezime: z.string().min(2, 'Prezime mora imati barem 2 znaka').max(32, 'Prezime je predugačko'),
+  username: z
+    .string()
+    .min(3, 'Username mora imati barem 3 znaka')
+    .max(32, 'Username je predugačak')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username smije sadržavati samo slova'),
+  lozinka: z.string().min(6, 'Lozinka mora imati barem 6 znakova'),
+});
+
+const signinSchema = z.object({
+  username: z.string().min(1, 'Username je obavezan'),
+  lozinka: z.string().min(1, 'Lozinka je obavezna'),
+});
 
 /// funkcija za registraciju
 export async function registerUserAction(prevState: any, formData: FormData) {
@@ -95,18 +110,3 @@ export async function logoutUserAction() {
   await deleteSession();
   redirect('/signin');
 }
-const mainSchema = z.object({
-  ime: z.string().min(2, 'Ime mora imati barem 2 znaka').max(32, 'Ime je predugačko'),
-  prezime: z.string().min(2, 'Prezime mora imati barem 2 znaka').max(32, 'Prezime je predugačko'),
-  username: z
-    .string()
-    .min(3, 'Username mora imati barem 3 znaka')
-    .max(32, 'Username je predugačak')
-    .regex(/^[a-zA-Z0-9_]+$/, 'Username smije sadržavati samo slova'),
-  lozinka: z.string().min(6, 'Lozinka mora imati barem 6 znakova'),
-});
-
-const signinSchema = z.object({
-  username: z.string().min(1, 'Username je obavezan'),
-  lozinka: z.string().min(1, 'Lozinka je obavezna'),
-});

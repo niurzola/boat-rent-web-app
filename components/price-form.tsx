@@ -41,7 +41,7 @@ export function PriceForm({
           </Field>
 
           <Field className="w-40">
-            <FieldLabel htmlFor={`cijena-${kat.ID_KATEGORIJE}`}>Cijena (kn)</FieldLabel>
+            <FieldLabel htmlFor={`cijena-${kat.ID_KATEGORIJE}`}>Cijena (€)</FieldLabel>
             <FieldContent>
               <Input
                 id={`cijena-${kat.ID_KATEGORIJE}`}

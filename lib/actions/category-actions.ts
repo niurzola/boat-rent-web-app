@@ -15,6 +15,13 @@ const priceSchema = z.object({
   cijena: z.string().min(1, 'Cijena je obavezna'),
 });
 
+/// shema za uređivanje cijene (dodaje idCijene)
+const updatePriceSchema = z.object({
+  idCijene: z.string().min(1, 'Nedostaje id cijene'),
+  trajanjeNajma: z.string().min(1, 'Trajanje najma je obavezno'),
+  cijena: z.string().min(1, 'Cijena je obavezna'),
+});
+
 /// funkcija za dodavanje nove kategorije
 export async function addCategory(prevState: any, formData: FormData) {
   const parsed = categorySchema.safeParse({
@@ -79,6 +86,52 @@ export async function addPrice(prevState: any, formData: FormData) {
       ID_KATEGORIJE: idKategorijeNum,
     },
   });
+
+  redirect('/cijene');
+}
+
+/// funkcija za uređivanje postojeće cijene
+export async function updatePrice(prevState: any, formData: FormData) {
+  const parsed = updatePriceSchema.safeParse({
+    idCijene: formData.get('idCijene'),
+    trajanjeNajma: formData.get('trajanjeNajma'),
+    cijena: formData.get('cijena'),
+  });
+
+  if (!parsed.success) {
+    return {
+      ...prevState,
+      zodErrors: z.flattenError(parsed.error).fieldErrors,
+      message: 'Provjeri unos',
+    };
+  }
+
+  const { idCijene, trajanjeNajma, cijena } = parsed.data;
+  const idCijeneNum = Number(idCijene);
+  const trajanje = Number(trajanjeNajma);
+  const iznos = Number(cijena);
+
+  await prisma.zAVRSNI_CIJENA.update({
+    where: { ID_CIJENE: idCijeneNum },
+    data: {
+      CIJENA: iznos,
+      TRAJANJE_NAJMA: trajanje,
+    },
+  });
+
+  redirect('/cijene');
+}
+
+/// funkcija za brisanje cijene (samo akcija, bez prevState)
+export async function deletePrice(prevState: any, formData: FormData) {
+  const idCijene = Number(formData.get('idCijene'));
+
+  try {
+    await prisma.zAVRSNI_CIJENA.delete({ where: { ID_CIJENE: idCijene } });
+  } catch {
+    /// cijena se koristi u rezervacijama (FK restrict) -> poruka, redirect je van try bloka
+    return { message: 'Cijena se koristi u rezervacijama i ne može se obrisati.' };
+  }
 
   redirect('/cijene');
 }

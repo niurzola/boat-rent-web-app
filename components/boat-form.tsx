@@ -38,7 +38,9 @@ export function BoatForm({
     <form action={formAction} className="w-full max-w-md">
       <Card>
         <CardHeader>
-          <CardTitle className="text-center">{isEditing ? 'Uredi Brod' : 'Dodaj Brod'}</CardTitle>
+          <CardTitle className="text-center cursor-pointer">
+            {isEditing ? 'Uredi Brod' : 'Dodaj Brod'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {isEditing && <input type="hidden" name="id" value={boat.ID_BRODA} />}
