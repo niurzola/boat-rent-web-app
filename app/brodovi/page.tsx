@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { BoatItem } from '@/components/boat-item';
 
 export default async function Brodovi() {
-  ///dohvaca sve brodove + cijenu
+  ///dohvaca sve brodove + cijenu + ostecenja
   const brodovi = await prisma.zAVRSNI_BROD.findMany({
     include: {
       ZAVRSNI_KATEGORIJA: { include: { ZAVRSNI_CIJENA: true } },
+      ZAVRSNI_OSTECENJA: true,
     },
     orderBy: { MODEL_BRODA: 'asc' },
   });

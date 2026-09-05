@@ -3,6 +3,13 @@ import { useRef, useActionState } from 'react';
 import Link from 'next/link';
 import { deleteBoat } from '@/lib/actions/boat-actions';
 import { Button } from '@/components/ui/button';
+import { OstecenjaDialog } from '@/components/ostecenja-dialog';
+
+type Ostecenje = {
+  ID_OSTECENJA: number;
+  URL_SLIKE: string | null;
+  OPIS: string | null;
+};
 
 type BrodItemProps = {
   brod: {
@@ -13,6 +20,7 @@ type BrodItemProps = {
     STATUS: string | null;
     ZAVRSNI_KATEGORIJA: { NAZIV: string } | null;
     ZAVRSNI_CIJENA?: { TRAJANJE_NAJMA: number; CIJENA: number | bigint | string }[];
+    ZAVRSNI_OSTECENJA?: Ostecenje[];
   };
 };
 
@@ -50,6 +58,7 @@ export function BoatItem({ brod }: BrodItemProps) {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
+          <OstecenjaDialog idBroda={brod.ID_BRODA} ostecenja={brod.ZAVRSNI_OSTECENJA ?? []} />
           <Link href={`/brodovi/${brod.ID_BRODA}`}>
             <Button variant="outline" size="sm">
               Uredi

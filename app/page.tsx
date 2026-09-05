@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Page() {
   return (
-    <div className="flex flex-col gap-4 min-h-screen mx-5">
+    <div className="flex min-h-screen flex-col gap-4 mx-5">
       <div className="grid grid-cols-2 gap-4">
         <Link href="/brodovi" className="border rounded-lg p-4 shadow-sm block hover:bg-muted">
           <h1 className="text-center text-lg font-medium">Brodovi</h1>
