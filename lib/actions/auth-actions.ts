@@ -50,7 +50,7 @@ export async function registerUserAction(prevState: any, formData: FormData) {
       message: 'Username je već zauzet',
     };
   }
-  ///hashianje passwora 10 rundi
+  ///hashiranje passwora 10 rundi
   const hashedPassword = await bcrypt.hash(lozinka, 10);
   /// create novog korisnika
   await prisma.zAVRSNI_KORISNIK.create({
@@ -63,7 +63,7 @@ export async function registerUserAction(prevState: any, formData: FormData) {
   });
   redirect('/signin');
 }
-/// funjkcija za sign in
+/// funkcija za sign in
 export async function signinUserAction(prevState: any, formData: FormData) {
   ///validacija sa signinschema
   const validatedFields = signinSchema.safeParse({

@@ -32,16 +32,16 @@ export function SigninForm() {
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-3xl font-bold text-foreground">Sign In</CardTitle>
-            <CardDescription>Enter your details to sign in to your account</CardDescription>
+            <CardDescription>Unesite korisničko ime i lozinku</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Korisničko ime</Label>
               <Input id="username" name="username" type="text" placeholder="username" />
               <ZodErrors error={formState?.zodErrors?.username} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lozinka">Password</Label>
+              <Label htmlFor="lozinka">Lozinka</Label>
               <Input id="lozinka" name="lozinka" type="password" placeholder="password" />
               <ZodErrors error={formState?.zodErrors?.lozinka} />
             </div>
@@ -54,7 +54,6 @@ export function SigninForm() {
           </CardFooter>
         </Card>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?
           <Link className="ml-2 text-primary" href="signup">
             Sign Up
           </Link>

@@ -32,7 +32,6 @@ export function SignupForm() {
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-3xl font-bold text-foreground">Sign Up</CardTitle>
-            <CardDescription>Enter your details to create a new account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -63,7 +62,6 @@ export function SignupForm() {
           </CardFooter>
         </Card>
         <div className="mt-4 text-center text-sm">
-          Have an account?
           <Link className="ml-2 text-primary" href="signin">
             Sign In
           </Link>
