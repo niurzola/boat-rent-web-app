@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { ReservationGrid } from '@/components/reservation-grid';
-
+export const dynamic = 'force-dynamic';
 export default async function RezervacijePage() {
   const brodovi = await prisma.zAVRSNI_BROD.findMany({
     include: {

@@ -11,3 +11,4 @@ export default async function PrihodiPage() {
 
   return <PrihodiList rezervacije={rezervacije} />;
 }
+export const dynamic = 'force-dynamic';

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { Button } from '@/components/ui/button';
 import { BoatItem } from '@/components/boat-item';
-
+export const dynamic = 'force-dynamic';
 export default async function Brodovi() {
   ///dohvaca sve brodove + cijenu + ostecenja
   const brodovi = await prisma.zAVRSNI_BROD.findMany({

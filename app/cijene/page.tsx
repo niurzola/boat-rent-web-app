@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { CategoryForm } from '@/components/category-form';
 import { PriceForm } from '@/components/price-form';
 import { PriceItem } from '@/components/price-item';
-
+export const dynamic = 'force-dynamic';
 /// type koju server predaje client komponentama
 export type Cijena = {
   ID_CIJENE: number;

@@ -18,6 +18,7 @@ import {
   updateReservation,
   deleteReservation,
 } from '@/lib/actions/reservation-actions';
+import { format } from 'date-fns';
 
 type Brod = {
   ID_BRODA: number;
@@ -94,7 +95,7 @@ export function ReservationGrid({
   }, [deleteState.success]);
 
   function formatDate(d: Date) {
-    return d.toISOString().split('T')[0];
+    return format(d, 'yyyy-MM-dd');
   }
 
   function formatDisplayDate(d: Date) {
@@ -132,8 +133,8 @@ export function ReservationGrid({
     setSelectedIndex(matchIndex >= 0 ? matchIndex : 0);
 
     const start = new Date(rez.VRIJEME);
-    setStartHour(start.getHours());
-    setStartMinute(start.getMinutes());
+    setStartHour(start.getUTCHours());
+    setStartMinute(start.getUTCMinutes());
 
     setEditingReservation(rez);
     setSheetOpen(true);
@@ -200,7 +201,7 @@ export function ReservationGrid({
           const dayReservations = rezervacije
             .filter((r) => {
               if (r.ID_BRODA !== brod.ID_BRODA) return false;
-              const rDate = new Date(r.DATUM).toISOString().split('T')[0];
+              const rDate = new Date(r.DATUM).toISOString().slice(0, 10);
               return rDate === formatDate(selectedDate);
             })
             .sort((a, b) => new Date(a.VRIJEME).getTime() - new Date(b.VRIJEME).getTime())
@@ -218,9 +219,9 @@ export function ReservationGrid({
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {dayReservations.map((r) => {
-                  const timeFrom = new Date(r.VRIJEME).toTimeString().slice(0, 5);
+                  const timeFrom = new Date(r.VRIJEME).toISOString().slice(11, 16);
                   const timeTo = r.VRIJEME_KRAJA
-                    ? new Date(r.VRIJEME_KRAJA).toTimeString().slice(0, 5)
+                    ? new Date(r.VRIJEME_KRAJA).toISOString().slice(11, 16)
                     : '??:??';
                   const depozit = Number(r.DEPOZIT ?? 0);
                   const ukupnaCijena = Number(r.UKUPNA_CIJENA ?? 0);

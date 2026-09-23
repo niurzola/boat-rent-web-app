@@ -122,14 +122,13 @@ export async function updatePrice(prevState: any, formData: FormData) {
   redirect('/cijene');
 }
 
-/// funkcija za brisanje cijene (samo akcija, bez prevState)
+/// funkcija za brisanje cijene
 export async function deletePrice(prevState: any, formData: FormData) {
   const idCijene = Number(formData.get('idCijene'));
 
   try {
     await prisma.zAVRSNI_CIJENA.delete({ where: { ID_CIJENE: idCijene } });
   } catch {
-    /// cijena se koristi u rezervacijama (FK restrict) -> poruka, redirect je van try bloka
     return { message: 'Cijena se koristi u rezervacijama i ne može se obrisati.' };
   }
 

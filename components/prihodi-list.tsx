@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { format } from 'date-fns';
 
 type Rezervacija = {
   DATUM: Date;
@@ -14,7 +15,7 @@ export function PrihodiList({ rezervacije }: { rezervacije: Rezervacija[] }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   function formatDate(d: Date) {
-    return d.toISOString().split('T')[0];
+    return format(d, 'yyyy-MM-dd');
   }
 
   function formatDisplayDate(d: Date) {
@@ -31,7 +32,7 @@ export function PrihodiList({ rezervacije }: { rezervacije: Rezervacija[] }) {
 
   const total = rezervacije.reduce(
     (sum, r) =>
-      new Date(r.DATUM).toISOString().split('T')[0] === formatDate(selectedDate)
+      new Date(r.DATUM).toISOString().slice(0, 10) === formatDate(selectedDate)
         ? sum + (r.UKUPNA_CIJENA ?? 0)
         : sum,
     0

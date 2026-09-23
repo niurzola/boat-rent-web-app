@@ -26,6 +26,13 @@ function timeToMinutes(t: string): number {
   return h * 60 + m;
 }
 
+function timeToUTC(t: string): Date {
+  const [h, m] = t.split(':').map(Number);
+  const d = new Date(0);
+  d.setUTCHours(h, m, 0, 0);
+  return d;
+}
+
 export async function createReservation(prevState: any, formData: FormData) {
   const parsed = reservationSchema.safeParse({
     brodId: formData.get('brodId'),
@@ -81,9 +88,9 @@ export async function createReservation(prevState: any, formData: FormData) {
   });
 
   for (const r of existingReservations) {
-    const existOd = timeToMinutes(r.VRIJEME.toTimeString().slice(0, 5));
+    const existOd = timeToMinutes(r.VRIJEME.toISOString().slice(11, 16));
     const existDo = r.VRIJEME_KRAJA
-      ? timeToMinutes(r.VRIJEME_KRAJA.toTimeString().slice(0, 5))
+      ? timeToMinutes(r.VRIJEME_KRAJA.toISOString().slice(11, 16))
       : existOd + 60;
 
     if (odMin < existDo && doMin > existOd) {
@@ -118,14 +125,8 @@ export async function createReservation(prevState: any, formData: FormData) {
     },
   });
 
-  const [odH, odM] = vrijemeOd.split(':').map(Number);
-  const [doH, doM] = vrijemeDo.split(':').map(Number);
-
-  const vrijemeOdDate = new Date(datumDate);
-  vrijemeOdDate.setHours(odH, odM, 0, 0);
-
-  const vrijemeDoDate = new Date(datumDate);
-  vrijemeDoDate.setHours(doH, doM, 0, 0);
+  const vrijemeOdDate = timeToUTC(vrijemeOd);
+  const vrijemeDoDate = timeToUTC(vrijemeDo);
 
   await prisma.zAVRSNI_REZERVACIJA.create({
     data: {
@@ -203,9 +204,9 @@ export async function updateReservation(prevState: any, formData: FormData) {
   });
 
   for (const r of existingReservations) {
-    const existOd = timeToMinutes(r.VRIJEME.toTimeString().slice(0, 5));
+    const existOd = timeToMinutes(r.VRIJEME.toISOString().slice(11, 16));
     const existDo = r.VRIJEME_KRAJA
-      ? timeToMinutes(r.VRIJEME_KRAJA.toTimeString().slice(0, 5))
+      ? timeToMinutes(r.VRIJEME_KRAJA.toISOString().slice(11, 16))
       : existOd + 60;
 
     if (odMin < existDo && doMin > existOd) {
@@ -231,14 +232,8 @@ export async function updateReservation(prevState: any, formData: FormData) {
     return { ...prevState, message: 'Nije pronađena cijena za traženo trajanje' };
   }
 
-  const [odH, odM] = vrijemeOd.split(':').map(Number);
-  const [doH, doM] = vrijemeDo.split(':').map(Number);
-
-  const vrijemeOdDate = new Date(datumDate);
-  vrijemeOdDate.setHours(odH, odM, 0, 0);
-
-  const vrijemeDoDate = new Date(datumDate);
-  vrijemeDoDate.setHours(doH, doM, 0, 0);
+  const vrijemeOdDate = timeToUTC(vrijemeOd);
+  const vrijemeDoDate = timeToUTC(vrijemeDo);
 
   await prisma.$transaction([
     prisma.zAVRSNI_KLIJENT.update({
